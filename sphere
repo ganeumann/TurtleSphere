@@ -1,0 +1,94 @@
+
+-- Build a hollow sphere with any given radius
+
+local tArgs = { ... }
+if #tArgs ~= 1 then
+  print( "Usage: sphere <radius>" )
+	return
+end
+
+local radius = tonumber( tArgs[1] )
+if radius < 2 then
+	print( "Radius must be at least 2" )
+	return
+end
+	
+local posx = 0
+local posy = 0
+local direction = 0
+local steps = radius * 7
+
+local function gotoxy(x,y)
+	local deltax = x - posx
+	local deltay = y - posy
+	
+	if deltax~=0 then
+		if direction == 1 then
+			turtle.turnLeft()
+			direction = 0
+		end
+		if deltax > 0 then
+			for n=1,deltax do
+				turtle.forward()
+			end
+		else
+			for n=deltax,-1 do
+				turtle.back()
+			end
+		end
+		posx = x
+	end
+	
+	if deltay~=0 then
+		if direction == 0 then
+			turtle.turnRight()
+			direction = 1
+		end
+		if deltay > 0 then
+			for n=1,deltay do
+				turtle.forward()
+			end
+		else
+			for n=deltay,-1 do
+				turtle.back()
+			end
+		end
+		posy = y
+	end
+	return true
+end
+
+local function placeBlock()
+	repeat
+		local blocks = 0
+		for k=1,9 do
+			blocks = blocks + turtle.getItemCount(k)
+		end
+		if blocks == 0 then sleep(10) end
+    print( "Waiting for more blocks to place." )
+	until blocks > 0
+	turtle.placeDown()
+end
+
+local function circle(cradius)
+	turtle.up()
+	turtle.select(1)
+	local tox = 0
+	local toy = 0
+	for i=0,steps do
+		theta = 2 * math.pi * i / steps
+		tox = math.floor( 0.5 + cradius * math.sin(theta) )
+		toy = math.floor( 0.5 + cradius * math.cos(theta) )
+		if tox ~= posx or toy ~= posy then
+			gotoxy(tox,toy)
+			placeBlock()
+		end
+	end
+	return true
+end
+
+for j=-radius+1,radius-1 do
+	local thradius = math.floor(0.5 + math.sqrt(radius * radius - (math.abs(j)+.5)*(math.abs(j)+.5)))
+	circle(thradius)
+end
+	
