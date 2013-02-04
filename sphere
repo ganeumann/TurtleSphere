@@ -1,9 +1,8 @@
-
 -- Build a hollow sphere with any given radius
 
 local tArgs = { ... }
 if #tArgs ~= 1 then
-  print( "Usage: sphere <radius>" )
+	print( "Usage: sphere <radius>" )
 	return
 end
 
@@ -64,10 +63,13 @@ local function placeBlock()
 		for k=1,9 do
 			blocks = blocks + turtle.getItemCount(k)
 		end
-		if blocks == 0 then sleep(10) end
-    print( "Waiting for more blocks to place." )
+		if blocks == 0 then
+			print( "Waiting for more blocks to place." )
+			sleep(10)
+		end
 	until blocks > 0
 	turtle.placeDown()
+	return true
 end
 
 local function circle(cradius)
